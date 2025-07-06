@@ -5,10 +5,6 @@
 **Karishma Afrin**  
 💼 AI Intern @ Pinnacle Labs Pvt. Ltd.  
 
-🔗 Check out the project demo on LinkedIn:  
-[LinkedIn Post](https://www.linkedin.com/posts/karishma-afrin-330333289_pinnaclelabs-internship2025-ai-activity-7346869774963875840-qHlj?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEX-fRQBGZUgIkjHQPfbNrnLqWujAMIYmPc)
-
-
 # 🧠 AI Autocorrect Tool
 
 🚀 Developed during my **Artificial Intelligence Internship at Pinnacle Labs Pvt. Ltd.**, the AI Autocorrect Tool is a smart web application that corrects grammar, spelling, and fluency errors using advanced NLP techniques. It supports multilingual input, real-time speech-to-text, user authentication, and a responsive, animated user interface.
