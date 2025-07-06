@@ -1,9 +1,3 @@
----
-
-## 🙋‍♀️ Developed By
-
-**Karishma Afrin**  
-💼 AI Intern @ Pinnacle Labs Pvt. Ltd.  
 
 # 🧠 AI Autocorrect Tool
 
