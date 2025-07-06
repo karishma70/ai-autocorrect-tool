@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI Autocorrect Tool</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364),
+                  url('background.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-blend-mode: overlay;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      transition: background 0.5s ease, color 0.5s ease;
+    }
+
+   body.light-theme {
+    background: linear-gradient(135deg, #748188, #020d31),
+              url('background.jpg');
+    color: #ebe6e6;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-blend-mode: lighten;
+ }
+  .wrapper {
+    position: relative;
+    max-width: 850px;
+    width: 100%;
+    padding: 40px 30px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(15px);
+    z-index: 1;
+    overflow: hidden; 
+  }
+
+.wrapper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 15px; 
+  border-radius: 20px;
+  background: linear-gradient(270deg, #5ef0df, #222068, #050233, #45033d);
+  background-size: 400% 400%;
+  animation: animatedBorder 8s linear infinite;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: -1;
+}
+
+@keyframes animatedBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+    .top-bar {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .top-bar button {
+      padding: 8px 15px;
+      border-radius: 20px;
+      border: none;
+      font-weight: bold;
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(5px);
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .top-bar button:hover {
+      background: #00ffe1;
+      color: black;
+      transform: scale(1.05);
+    }
+
+    .output ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.output li {
+  background: rgba(0, 255, 225, 0.1);
+  border-left: 3px solid #00ffe1;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.output code {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  color: #ffd700;
+}
+
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 1.1em;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 10px;
+      background: #1f1f1f;
+      color: #fff;
+      font-size: 1em;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+    }
+
+    body.light-theme input,
+    body.light-theme textarea {
+      background: #e9e9e9;
+      color: #000;
+    }
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+      justify-content: center;
+    }
+
+    button {
+      padding: 12px 20px;
+      font-size: 1em;
+      border: none;
+      border-radius: 10px;
+      background: #00ffe1;
+      color: black;
+      cursor: pointer;
+      box-shadow: 0 0 10px #00ffe1;
+      transition: all 0.2s ease-in-out;
+    }
+
+    button:hover {
+      background: #02c9aa;
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px #02c9aa;
+    }
+
+    .output {
+      background: #1c1c1c;
+      padding: 15px;
+      border-radius: 10px;
+      min-height: 100px;
+      font-size: 1em;
+      color: #fff;
+      white-space: pre-wrap;
+      line-height: 1.4;
+      border-left: 4px solid #00ffe1;
+    }
+
+    body.light-theme .output {
+      background: #f2f2f2;
+      color: #000;
+      border-left: 4px solid #007acc;
+    }
+
+    .spinner {
+      border: 4px solid #333;
+      border-top: 4px solid #00ffe1;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 10px auto;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    #loginModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    #loginModal .modal-box {
+      background: white;
+      color: black;
+      padding: 30px;
+      border-radius: 15px;
+      width: 300px;
+    }
+
+    @media screen and (max-width: 768px) {
+      .wrapper {
+        padding: 30px 20px;
+      }
+    }
+
+    .title {
+  text-align: center;
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: #00ffe1;
+  text-shadow: 0 0 10px #00ffe1, 0 0 20px #0ff;
+  margin-bottom: 30px;
+  animation: pulse-glow 2s infinite ease-in-out;
+  letter-spacing: 1.5px;
+}
+
+@keyframes pulse-glow {
+  0% {
+    text-shadow: 0 0 10px #359c95, 0 0 20px rgb(48, 174, 178);
+  }
+  50% {
+    text-shadow: 0 0 20px #41a396, 0 0 40px rgb(65, 191, 191);
+  }
+  100% {
+    text-shadow: 0 0 10px #44988e, 0 0 20px rgb(46, 180, 180);
+  }
+}
+
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+  <div class="left-bar">
+    <select id="languageSelect">
+      <option value="auto">🌐 Auto Detect</option>
+      <option value="en">🇬🇧 English</option>
+      <option value="fr">🇫🇷 French</option>
+      <option value="es">🇪🇸 Spanish</option>
+      <option value="de">🇩🇪 German</option>
+      <option value="it">🇮🇹 Italian</option>
+      <option value="pt">🇵🇹 Portuguese</option>
+      <option value="hi">🇮🇳 Hindi</option>
+      <option value="bn">🇧🇩 Bengali</option>
+      <option value="zh">🇨🇳 Chinese</option>
+      <option value="ja">🇯🇵 Japanese</option>
+      <option value="ko">🇰🇷 Korean</option>
+    </select>
+  </div>
+  <div class="right-bar">
+    <button onclick="toggleTheme()">🌗 Theme</button>
+    <button onclick="openLogin()">🔐 Login</button>
+  </div>
+</div>
+
+  <div class="wrapper">
+    <h1 class="title"> AI Autocorrect Tool 🤖</h1>
+
+    <form onsubmit="event.preventDefault(); correctSentence();">
+      <label for="inputText">Enter your sentence: </label>
+      <input type="text" id="inputText" placeholder="Start typing or use mic 🎤..." autocomplete="off" />
+
+      <div class="buttons">
+        <button type="button" onclick="startDictation()">🎤 Mic</button>
+        <button type="submit">✅ Correct</button>
+        <button type="button" onclick="copyOutput()">📋 Copy</button>
+        <button type="button" onclick="downloadOutput()">⬇️ Download</button>
+        <button type="button" onclick="clearAll()">🧹 Clear</button>
+      </div>
+    </form>
+    <div class="output" id="outputBox">⌛ Waiting for input...</div>
+  </div>
+
+  
+  <div id="loginModal">
+    <div class="modal-box">
+      <h2>Login</h2>
+      <input type="email" id="email" placeholder="Email" /><br><br>
+      <input type="password" id="password" placeholder="Password" /><br><br>
+      <button onclick="login()">🔓 Login</button>
+      <button onclick="closeLogin()">❌ Cancel</button>
+    </div>
+  </div>
+
+  <script>
+    const input = document.getElementById('inputText');
+    const output = document.getElementById('outputBox');
+
+    function typeText(text, speed = 25) {
+      output.innerHTML = "";
+      let i = 0;
+      let interval = setInterval(() => {
+        output.innerHTML += text.charAt(i);
+        i++;
+        if (i >= text.length) clearInterval(interval);
+      }, speed);
+    }
+
+    function correctSentence() {
+  const text = input.value.trim();
+  if (!text) {
+    output.innerHTML = "⚠️ Please enter text.";
+    return;
+  }
+
+  output.innerHTML = `<div class="spinner"></div>`;
+
+  fetch("http://127.0.0.1:5000/correct", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.corrected) {
+      
+      let html = `<p><b>✅ Corrected:</b><br>${data.corrected}</p>`;
+
+      
+      if (data.alternatives && data.alternatives.length > 0) {
+        html += `<hr><h3>💡 Suggestions:</h3><ul>`;
+        data.alternatives.forEach(item => {
+          html += `<li>
+            <b>🔍 Error:</b> <code>${item.error}</code><br>
+            <b>💬 Message:</b> ${item.message}<br>
+            <b>🛠 Suggestions:</b> <i>${item.suggestions.join(", ")}</i>
+          </li><br>`;
+        });
+        html += `</ul>`;
+      }
+
+      output.innerHTML = html;
+    } else {
+      output.innerHTML = "⚠️ Correction failed.";
+    }
+  })
+  .catch(() => {
+    output.innerHTML = "❌ Server error.";
+  });
+}
+
+
+    function clearAll() {
+      input.value = "";
+      output.innerHTML = "⌛ Waiting for input...";
+    }
+
+    function copyOutput() {
+      navigator.clipboard.writeText(output.innerText).then(() => {
+        alert("✅ Copied to clipboard!");
+      });
+    }
+
+    function downloadOutput() {
+      const blob = new Blob([output.innerText], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "correction.txt";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function startDictation() {
+      if ('webkitSpeechRecognition' in window) {
+        const recognition = new webkitSpeechRecognition();
+        recognition.lang = "en-US";
+        recognition.onresult = function(event) {
+          input.value = event.results[0][0].transcript;
+        };
+        recognition.start();
+      } else {
+        alert("❌ Speech recognition not supported.");
+      }
+    }
+
+    function openLogin() {
+      document.getElementById("loginModal").style.display = "flex";
+    }
+
+    function closeLogin() {
+      document.getElementById("loginModal").style.display = "none";
+    }
+
+    function login() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      fetch("http://127.0.0.1:5000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert("✅ Welcome " + data.email);
+          closeLogin();
+        } else {
+          alert("❌ " + data.message);
+        }
+      });
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('light-theme');
+    }
+  </script>
+</body>
+</html>

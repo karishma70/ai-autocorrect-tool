@@ -1,0 +1,10 @@
+flask
+flask-cors
+flask-sqlalchemy
+flask-login
+werkzeug
+language-tool-python
+langdetect
+deep-translator
+razorpay
+setuptools
