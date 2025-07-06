@@ -5,8 +5,7 @@
 **Karishma Afrin**  
 💼 AI Intern @ Pinnacle Labs Pvt. Ltd.  
 See the projecy demo in below linkdin link
-🔗 [LinkedIn]([https://www.linkedin.com/in/karishma-afrin](https://www.linkedin.com/posts/karishma-afrin-330333289_pinnaclelabs-internship2025-ai-activity-7346869774963875840-qHlj?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEX-fRQBGZUgIkjHQPfbNrnLqWujAMIYmPc))
-📧 karishma.afrin@gmail.com 
+🔗 [LinkedIn](https://www.linkedin.com/posts/karishma-afrin-330333289_pinnaclelabs-internship2025-ai-activity-7346869774963875840-qHlj?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEX-fRQBGZUgIkjHQPfbNrnLqWujAMIYmPc))
 
 
 # 🧠 AI Autocorrect Tool
